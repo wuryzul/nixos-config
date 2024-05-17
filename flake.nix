@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "nixpkgs/nixos-23.11";
+    nixos-wsl.url = "github:nix-community/nixos-wsl";
 
     home-manager-unstable.url = "github:nix-community/home-manager/master";
     home-manager-unstable.inputs.nixpkgs.follows = "nixpkgs";
@@ -12,12 +13,12 @@
     home-manager-stable.inputs.nixpkgs.follows = "nixpkgs-stable";
   };
 
-  outputs = inputs@{ self, nixpkgs, ... }: 
+  outputs = inputs@{ self, nixos-wsl, nixpkgs, ... }: 
     let
         systemSettings = {
           system = "x86_64-linux";
-          hostname = "tinker";
-          profile = "tinker";
+          hostname = "alexandria";
+          profile = "wsl";
           timezone = "America/Chicago";
           locale = "en_US.UTF-8";
         };
@@ -57,6 +58,11 @@
                inputs.nixpkgs-stable.lib
              else
                inputs.nixpkgs.lib);
+      wslModule = (if ((systemSettings.profile == "wsl"))
+        then
+          nixos-wsl.nixosModules.wsl
+        else
+          null);
     in {
       homeConfigurations = {
         "${userSettings.username}" = home-manager.lib.homeManagerConfiguration {
@@ -76,6 +82,7 @@
         "${systemSettings.hostname}" = lib.nixosSystem {
           system = systemSettings.system;
           modules = [
+            wslModule
             (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
           ];
           specialArgs = {

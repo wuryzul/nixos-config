@@ -1,4 +1,4 @@
-{ systemSettings, ... }: {
+{ systemSettings, nixos-wsl, ... }: {
   imports = [
     ../app/docker.nix
   ];
@@ -7,5 +7,14 @@
   
   wsl.enable = true;
   wsl.defaultUser = "wury";
-  wsl.wslConf.network.generateResolvConf = false;  
+  wsl.wslConf.network.generateResolvConf = false;
+
+  networking.nameservers = [
+    "10.160.0.101"
+    "10.160.0.100"
+    "10.32.0.101"
+    "10.32.0.100"
+    "192.168.1.254"
+    "1.1.1.1"
+  ];
 }
