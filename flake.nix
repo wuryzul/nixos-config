@@ -17,8 +17,8 @@
     let
         systemSettings = {
           system = "x86_64-linux";
-          hostname = "alexandria";
-          profile = "wsl";
+          hostname = "tinker";
+          profile = "tinker";
           timezone = "America/Chicago";
           locale = "en_US.UTF-8";
         };
@@ -58,11 +58,6 @@
                inputs.nixpkgs-stable.lib
              else
                inputs.nixpkgs.lib);
-      wslModule = (if ((systemSettings.profile == "wsl"))
-        then
-          nixos-wsl.nixosModules.wsl
-        else
-          null);
     in {
       homeConfigurations = {
         "${userSettings.username}" = home-manager.lib.homeManagerConfiguration {
@@ -81,10 +76,17 @@
       nixosConfigurations = {
         "${systemSettings.hostname}" = lib.nixosSystem {
           system = systemSettings.system;
-          modules = [
-            wslModule
-            (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
-          ];
+          modules = (if systemSettings.system == "wsl"
+            then 
+            [
+              nixos-wsl.nixosModules.wsl
+              (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
+            ]
+            else
+            [
+              (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
+            ]
+          );
           specialArgs = {
             inherit pkgs-stable;
             inherit systemSettings;
