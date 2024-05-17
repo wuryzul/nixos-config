@@ -18,7 +18,7 @@
         systemSettings = {
           system = "x86_64-linux";
           hostname = "tinker";
-          profile = "tinker";
+          profile = "homelab";
           timezone = "America/Chicago";
           locale = "en_US.UTF-8";
         };
@@ -64,6 +64,7 @@
           inherit pkgs;
           modules = [
             (./. + "/profiles" + ("/" + systemSettings.profile) + "/home.nix")
+              (./. + "/hosts" + ("/" + systemSettings.hostname) + "/home.nix")
           ];
           extraSpecialArgs = {
             inherit inputs;
@@ -77,14 +78,16 @@
         "${systemSettings.hostname}" = lib.nixosSystem {
           system = systemSettings.system;
           modules = (if systemSettings.system == "wsl"
-            then 
+            then
             [
               nixos-wsl.nixosModules.wsl
               (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
+              (./. + "/hosts" + ("/" + systemSettings.hostname) + "/configuration.nix")
             ]
             else
             [
               (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
+              (./. + "/hosts" + ("/" + systemSettings.hostname) + "/configuration.nix")
             ]
           );
           specialArgs = {

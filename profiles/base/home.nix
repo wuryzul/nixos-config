@@ -72,7 +72,7 @@
       };
       zsh = {
         enable = true;
-        autosuggestion.enable = true;
+        enableAutosuggestions = true;
         plugins = [
           {
             name = "powerlevel10k";
