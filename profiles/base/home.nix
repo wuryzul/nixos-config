@@ -8,20 +8,18 @@
 
     home = {
       username = userSettings.username;
-
+      sessionPath = [
+        "~/bin"
+      ];
       sessionVariables = {
         EDITOR = "nvim";
         SUDO_EDITOR = "nvim";
         VISUAL = "nvim";
         DIRENV_LOG_FORMAT = "";
       };
-
       file = {
-        #bin = {
-        #  source = ../../user/home/bin;
-        #  target = "~/bin";
-        #  recursive = true;
-        #};
+        bin.source = ../../user/home/bin;
+        ".gitconfig".source = ../../user/home/.gitconfig;
         nvim = {
           source = ../../user/home/.config/nvim;
           target = ".config/nvim";
